@@ -43,9 +43,9 @@ def is_cell(arg):
     return arg in ([-1], [0], [1])
 
 
-def equal_cells(c1, c2):
+def equal_states(c1, c2):
     '''
-    equal_cells: cell x cell -> boolean
+    equal_states: cell x cell -> boolean
     Returns True if both cells are in the same state
     '''
     return is_cell(c1) and is_cell(c2) and c1 == c2
