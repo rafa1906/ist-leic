@@ -1,114 +1,116 @@
-# 92544 Rafael Goncalves
+# Author: Rafael Goncalves
+# File: helloquantum.py
+# Description: Main file for the Hello Quantum game
 
 
-# TAD celula
-def cria_celula(val):
+# ADT cell
+def create_cell(val):
     '''
-    cria_celula: {1, 0, 1} -> celula
-    Construtor do TAD celula: retorna a celula correspondente ao valor introduzido
-    A representacao interna da celula e uma lista apenas com o valor
+    create_cell: {1, 0, 1} -> cell
+    ADT cell constructor: returns a cell in accordance with input
+    Internal representation is a list with the value
     '''
     if val in (-1, 0, 1):
         return [val]
 
     else:
-        raise ValueError("cria_celula: argumento invalido.")
+        raise ValueError("create_cell: invalid argument.")
 
 
-def obter_valor(c):
+def get_value(c):
     '''
-    obter_valor: celula  -> {1, 0, 1}
-    Retorna o valor associado ao estado da celula
+    get_value: cell  -> {1, 0, 1}
+    Returns cell state value
     '''
     return c[0]
 
 
-def inverte_estado(c):
+def invert_state(c):
     '''
-    inverte_estado: celula -> celula
-    Inverte o estado da celula
+    invert_state: cell -> cell
+    Inverts cell state
     '''
-    c[0] = (-1, 1, 0)[obter_valor(c) + 1]
+    c[0] = (-1, 1, 0)[get_value(c) + 1]
 
     return c
 
 
-def eh_celula(arg):
+def is_cell(arg):
     '''
-    eh_celula: universal -> logico
-    Retorna True se arg for uma celula
+    is_cell: universal -> boolean
+    Returns True if arg is a cell
     '''
     return arg in ([-1], [0], [1])
 
 
-def celulas_iguais(c1, c2):
+def equal_cells(c1, c2):
     '''
-    celulas_iguais: celula x celula -> logico
-    Retorna True se o estado das celulas for semelhante
+    equal_cells: cell x cell -> boolean
+    Returns True if both cells are in the same state
     '''
-    return eh_celula(c1) and eh_celula(c2) and c1 == c2
+    return is_cell(c1) and is_cell(c2) and c1 == c2
 
 
-def celula_para_str(c):
+def cell_to_str(c):
     '''
-    celula_para_str: celula -> string
-    Retorna a cadeia de caracteres correspondente ao estado da celula
+    cell_to_str: cell -> string
+    Returns the external representation of a cell in the form of a string
     '''
-    return ("x", "0", "1")[obter_valor(c) + 1]
+    return ("x", "0", "1")[get_value(c) + 1]
 
 
-# TAD coordenada
-def cria_coordenada(l, c):
+# ADT coord
+def create_coord(l, c):
     '''
-    cria_coordenada: n x n -> coordenada
-    Construtor do TAD coordenada: retorna a coordenada correspondente aos valores introduzidos
-    A representacao interna da coordenada e um tuplo com a linha e a coluna
+    create_coord: n x n -> coord
+    ADT coord constructor: returns a coordinate in accordance with input
+    Internal representation is a tuple in the format (line, column)
     '''
     if l in (0, 1, 2) and c in (0, 1, 2):
         return l, c
 
     else:
-        raise ValueError("cria_coordenada: argumentos invalidos.")
+        raise ValueError("create_coord: invalid arguments.")
 
 
-def coordenada_linha(c):
+def get_line_from_coord(c):
     '''
-    coordenada_linha: coordenada -> n
-    Retorna a linha da coordenada
+    get_line_from_coord: coord -> n
+    Returns coord line
     '''
     return c[0]
 
 
-def coordenada_coluna(c):
+def get_column_from_coord(c):
     '''
-    coordenada_coluna: coordenada -> n
-    Retorna a coluna da coordenada
+    get_column_from_coord: coord -> n
+    Returns coord column
     '''
     return c[1]
 
 
-def eh_coordenada(arg):
+def is_coord(arg):
     '''
-    eh_coordenada: universal -> logico
-    Retorna True se arg for do tipo coordenada
+    is_coord: universal -> boolean
+    Returns True if arg is a coord
     '''
     return isinstance(arg, tuple) and len(arg) == 2 and arg[0] in (0, 1, 2) and arg[1] in (0, 1, 2)
 
 
-def coordenadas_iguais(c1, c2):
+def equal_coords(c1, c2):
     '''
-    coordenadas_iguais: coordenada x coordenada -> logico
-    Retorna True se as duas coordenadas forem iguais
+    equal_coords: coord x coord -> boolean
+    Returns True if two coords are the same
     '''
-    return eh_coordenada(c1) and eh_coordenada(c2) and c1 == c2
+    return is_coord(c1) and is_coord(c2) and c1 == c2
 
 
-def coordenada_para_str(c):
+def coord_to_str(c):
     '''
-    coordenada_para_str: coordenada -> string
-    Retorna a cadeia de caracteres correspondente a coordenada
+    coord_to_str: coord -> string
+    Returns the external representation of a coord in the form of a string
     '''
-    return "(" + str(coordenada_linha(c)) + ", " + str(coordenada_coluna(c)) + ")"
+    return "(" + str(get_line_from_coord(c)) + ", " + str(get_column_from_coord(c)) + ")"
 
 
 # TAD tabuleiro
@@ -117,7 +119,7 @@ def tab_aux(arg):
     tab_aux: lista -> tabuleiro
     Funcao auxiliar que transforma todos os valores numericos no tabuleiro em celulas
     '''
-    return list(list(map(cria_celula, l)) for l in arg)      # map: aplica cria_celula a todos os elementos do argumento
+    return list(list(map(create_cell, l)) for l in arg)      # map: aplica create_cell a todos os elementos do argumento
 
 
 def get_pos(coor):
@@ -125,11 +127,11 @@ def get_pos(coor):
     get_pos: coordenada -> posicao
     Funcao auxiliar que recebe uma coordenada e retorna uma posicao interpretavel pelo tabuleiro
     '''
-    if coordenada_linha(coor) == 2:
-        return coordenada_linha(coor), coordenada_coluna(coor) - 1      # get_pos: ajusta os valores para a ultima linha
+    if get_line_from_coord(coor) == 2:
+        return get_line_from_coord(coor), get_column_from_coord(coor) - 1      # get_pos: ajusta os valores para a ultima linha
 
     else:
-        return coordenada_linha(coor), coordenada_coluna(coor)
+        return get_line_from_coord(coor), get_column_from_coord(coor)
 
 
 def tabuleiro_inicial():
@@ -179,7 +181,7 @@ def eh_tabuleiro(arg):
     Retorna True se arg for do tipo tabuleiro
     '''
     return isinstance(arg, list) and len(arg) == 3 and all(isinstance(e, list) for e in arg) and \
-           len(arg[0]) == 3 and len(arg[1]) == 3 and len(arg[2]) == 2 and all(all(map(eh_celula, l)) for l in arg)
+           len(arg[0]) == 3 and len(arg[1]) == 3 and len(arg[2]) == 2 and all(all(map(is_cell, l)) for l in arg)
 
 
 def tabuleiro_substitui_celula(t, cel, coor):
@@ -187,7 +189,7 @@ def tabuleiro_substitui_celula(t, cel, coor):
     tabuleiro_substitui_celula: tabuleiro x celula x coordenada -> tabuleiro
     Substitui a celula nas coordenadas indicadas por cel
     '''
-    if eh_tabuleiro(t) and eh_celula(cel) and eh_coordenada(coor) and coor != cria_coordenada(2, 0):
+    if eh_tabuleiro(t) and is_cell(cel) and is_coord(coor) and coor != create_coord(2, 0):
         pos = get_pos(coor)
         t[pos[0]][pos[1]] = cel
 
@@ -197,19 +199,19 @@ def tabuleiro_substitui_celula(t, cel, coor):
         raise ValueError("tabuleiro_substitui_celula: argumentos invalidos.")
 
 
-def tabuleiro_inverte_estado(t, coor):
+def tabuleiro_invert_state(t, coor):
     '''
-    tabuleiro_inverte_estado: tabuleiro x coordenada -> tabuleiro
+    tabuleiro_invert_state: tabuleiro x coordenada -> tabuleiro
     Inverte o valor da celula nas coordenadas indicadas
     '''
-    if eh_tabuleiro(t) and eh_coordenada(coor) and coor != cria_coordenada(2, 0):
+    if eh_tabuleiro(t) and is_coord(coor) and coor != create_coord(2, 0):
         pos = get_pos(coor)
-        t[pos[0]][pos[1]] = inverte_estado(tabuleiro_celula(t, coor))
+        t[pos[0]][pos[1]] = invert_state(tabuleiro_celula(t, coor))
 
         return t
 
     else:
-        raise ValueError("tabuleiro_inverte_estado: argumentos invalidos.")
+        raise ValueError("tabuleiro_invert_state: argumentos invalidos.")
 
 
 def tabuleiros_iguais(t1, t2):
@@ -225,7 +227,7 @@ def tabuleiro_para_str(t):
     tabuleiro_para_str: tabuleiro -> string
     Retorna a representacao visual do tabuleiro introduzido
     '''
-    tab_cel = list(list(map(celula_para_str, l)) for l in t)        # tab_cel: transforma as celulas em strings
+    tab_cel = list(list(map(cell_to_str, l)) for l in t)        # tab_cel: transforma as celulas em strings
 
     tab_str = "+-------+\n" + \
               "|..." + tab_cel[0][2] + "...|\n" + \
@@ -246,11 +248,11 @@ def porta_x(t, p):
     if eh_tabuleiro(t) and (p == "E" or p == "D"):
         if p == "E":
             for j in range(tabuleiro_dimensao(t)):
-                tabuleiro_inverte_estado(t, cria_coordenada(1, j))
+                tabuleiro_invert_state(t, create_coord(1, j))
 
         else:
             for i in range(tabuleiro_dimensao(t)):
-                tabuleiro_inverte_estado(t, cria_coordenada(i, 1))
+                tabuleiro_invert_state(t, create_coord(i, 1))
 
         return t
     else:
@@ -265,11 +267,11 @@ def porta_z(t, p):
     if eh_tabuleiro(t) and (p == "E" or p == "D"):
         if p == "E":
             for j in range(tabuleiro_dimensao(t)):
-                tabuleiro_inverte_estado(t, cria_coordenada(0, j))
+                tabuleiro_invert_state(t, create_coord(0, j))
 
         else:
             for i in range(tabuleiro_dimensao(t)):
-                tabuleiro_inverte_estado(t, cria_coordenada(i, 2))
+                tabuleiro_invert_state(t, create_coord(i, 2))
 
         return t
 
@@ -285,19 +287,19 @@ def porta_h(t, p):
     if eh_tabuleiro(t) and (p == "E" or p == "D"):
         if p == "E":
             for j in range(tabuleiro_dimensao(t)):
-                cel_1 = tabuleiro_celula(t, cria_coordenada(0, j))
-                cel_2 = tabuleiro_celula(t, cria_coordenada(1, j))      # cel_1 e cel_2: preservam o valor das celulas
+                cel_1 = tabuleiro_celula(t, create_coord(0, j))
+                cel_2 = tabuleiro_celula(t, create_coord(1, j))      # cel_1 e cel_2: preservam o valor das celulas
 
-                tabuleiro_substitui_celula(t, cel_1, cria_coordenada(1, j))
-                tabuleiro_substitui_celula(t, cel_2, cria_coordenada(0, j))
+                tabuleiro_substitui_celula(t, cel_1, create_coord(1, j))
+                tabuleiro_substitui_celula(t, cel_2, create_coord(0, j))
 
         else:
             for i in range(tabuleiro_dimensao(t)):
-                cel_1 = tabuleiro_celula(t, cria_coordenada(i, 1))
-                cel_2 = tabuleiro_celula(t, cria_coordenada(i, 2))
+                cel_1 = tabuleiro_celula(t, create_coord(i, 1))
+                cel_2 = tabuleiro_celula(t, create_coord(i, 2))
 
-                tabuleiro_substitui_celula(t, cel_1, cria_coordenada(i, 2))
-                tabuleiro_substitui_celula(t, cel_2, cria_coordenada(i, 1))
+                tabuleiro_substitui_celula(t, cel_1, create_coord(i, 2))
+                tabuleiro_substitui_celula(t, cel_2, create_coord(i, 1))
 
         return t
 
