@@ -60,23 +60,23 @@ def cell_to_str(c):
 
 
 # ADT coord
-def create_coord(l, c):
+def create_coord(r, c):
     '''
     create_coord: n x n -> coord
     ADT coord constructor: returns a coordinate in accordance with input
-    Internal representation is a tuple in the format (line, column)
+    Internal representation is a tuple in the format (row, column)
     '''
-    if l in (0, 1, 2) and c in (0, 1, 2):
-        return l, c
+    if r in (0, 1, 2) and c in (0, 1, 2):
+        return r, c
 
     else:
         raise ValueError("create_coord: invalid arguments.")
 
 
-def get_line_from_coord(c):
+def get_row_from_coord(c):
     '''
-    get_line_from_coord: coord -> n
-    Returns coord line
+    get_row_from_coord: coord -> n
+    Returns coord row
     '''
     return c[0]
 
@@ -110,124 +110,124 @@ def coord_to_str(c):
     coord_to_str: coord -> string
     Returns the external representation of a coord in the form of a string
     '''
-    return "(" + str(get_line_from_coord(c)) + ", " + str(get_column_from_coord(c)) + ")"
+    return "(" + str(get_row_from_coord(c)) + ", " + str(get_column_from_coord(c)) + ")"
 
 
-# TAD tabuleiro
-def tab_aux(arg):
+# ADT board
+def board_aux(arg):
     '''
-    tab_aux: lista -> tabuleiro
-    Funcao auxiliar que transforma todos os valores numericos no tabuleiro em celulas
+    board_aux: list -> board
+    Transforms numeric values in cells given a blueprint for a board
     '''
-    return list(list(map(create_cell, l)) for l in arg)      # map: aplica create_cell a todos os elementos do argumento
+    return list(list(map(create_cell, l)) for l in arg)      # Maps create_cell to all members of the list
 
 
-def get_pos(coor):
+def get_pos(coord):
     '''
-    get_pos: coordenada -> posicao
-    Funcao auxiliar que recebe uma coordenada e retorna uma posicao interpretavel pelo tabuleiro
+    get_pos: coord -> pos
+    Returns a position in the board given a coord
     '''
-    if get_line_from_coord(coor) == 2:
-        return get_line_from_coord(coor), get_column_from_coord(coor) - 1      # get_pos: ajusta os valores para a ultima linha
+    if get_row_from_coord(coord) == 2:         # Adjusts column if coord is in the last row
+        return get_row_from_coord(coord), get_column_from_coord(coord) - 1
 
     else:
-        return get_line_from_coord(coor), get_column_from_coord(coor)
+        return get_row_from_coord(coord), get_column_from_coord(coord)
 
 
-def tabuleiro_inicial():
+def init_board():
     '''
-    tabuleiro_inicial: {} -> tabuleiro
-    Retorna o tabuleiro inicial
+    init_board: {} -> board
+    Returns the initial board
     '''
-    return tab_aux([[-1, -1, -1], [0, 0, -1], [0, -1]])
+    return board_aux([[-1, -1, -1], [0, 0, -1], [0, -1]])
 
 
-def str_para_tabuleiro(s):
+def str_to_board(s):
     '''
-    str_para_tabuleiro: string -> tabuleiro
-    Transforma a string recebida (correspondente a um tuplo de tuplos) num tabuleiro
+    str_to_board: string -> board
+    Creates a new board given a string (must be a tuple of tuples)
     '''
     if isinstance(s, str) and isinstance(eval(s), tuple) and len(eval(s)) == 3 and \
        all(isinstance(e, tuple) for e in eval(s)) and \
        len(eval(s)[0]) == 3 and len(eval(s)[1]) == 3 and len(eval(s)[2]) == 2 and \
        all(all(map(lambda x: x in (-1, 0, 1), l)) for l in eval(s)):
-        return tab_aux(eval(s))
+        return board_aux(eval(s))
 
     else:
-        raise ValueError("str_para_tabuleiro: argumento invalido.")
+        raise ValueError("str_to_board: invalid argument.")
 
 
-def tabuleiro_dimensao(t):
+def board_dim(b):
     '''
-    tabuleiro_dimensao: tabuleiro -> n
-    Retorna o numero de linhas (e consequentemente, o numero de colunas) do tabuleiro
+    board_dim: board -> n
+    Returns the number of rows (likewise, columns) in a board
     '''
-    return len(t)
+    return len(b)
 
 
-def tabuleiro_celula(t, coor):
+def board_cell(b, coord):
     '''
-    tabuleiro_celula: tabuleiro x coordenada -> celula
-    Retorna a celula presente na coordenada indicada
+    board_cell: board x coord -> cell
+    Returns a cell given a board and a coord
     '''
-    pos = get_pos(coor)
+    pos = get_pos(coord)
 
-    return t[pos[0]][pos[1]]
+    return b[pos[0]][pos[1]]
 
 
-def eh_tabuleiro(arg):
+def is_board(arg):
     '''
-    eh_tabuleiro: universal -> logico
-    Retorna True se arg for do tipo tabuleiro
+    is_board: universal -> boolean
+    Returns True if arg is a board
     '''
     return isinstance(arg, list) and len(arg) == 3 and all(isinstance(e, list) for e in arg) and \
            len(arg[0]) == 3 and len(arg[1]) == 3 and len(arg[2]) == 2 and all(all(map(is_cell, l)) for l in arg)
 
 
-def tabuleiro_substitui_celula(t, cel, coor):
+def board_change_cell(b, cell, coord):
     '''
-    tabuleiro_substitui_celula: tabuleiro x celula x coordenada -> tabuleiro
-    Substitui a celula nas coordenadas indicadas por cel
+    board_change_cell: board x cell x coord -> board
+    Changes the contents of the specified position to cell
     '''
-    if eh_tabuleiro(t) and is_cell(cel) and is_coord(coor) and coor != create_coord(2, 0):
-        pos = get_pos(coor)
-        t[pos[0]][pos[1]] = cel
+    if is_board(b) and is_cell(cell) and is_coord(coord) and coord != create_coord(2, 0):
+        pos = get_pos(coord)
+        b[pos[0]][pos[1]] = cell
 
-        return t
+        return b
 
     else:
-        raise ValueError("tabuleiro_substitui_celula: argumentos invalidos.")
+        raise ValueError("board_change_cell: invalid arguments.")
 
 
-def tabuleiro_invert_state(t, coor):
+def board_invert_state(b, coord):
     '''
-    tabuleiro_invert_state: tabuleiro x coordenada -> tabuleiro
-    Inverte o valor da celula nas coordenadas indicadas
+    board_invert_state: board x coord -> board
+    Inverts the cell in the given position
     '''
-    if eh_tabuleiro(t) and is_coord(coor) and coor != create_coord(2, 0):
-        pos = get_pos(coor)
-        t[pos[0]][pos[1]] = invert_state(tabuleiro_celula(t, coor))
+    if is_board(b) and is_coord(coord) and coord != create_coord(2, 0):
+        pos = get_pos(coord)
+        b[pos[0]][pos[1]] = invert_state(board_cell(b, coord))
 
-        return t
+        return b
 
     else:
-        raise ValueError("tabuleiro_invert_state: argumentos invalidos.")
+        raise ValueError("board_invert_state: invalid arguments.")
 
 
-def tabuleiros_iguais(t1, t2):
+def equal_boards(b1, b2):
     '''
-    tabuleiros_iguais: tabuleiro x tabuleiro -> logico
-    Retorna True se os tabuleiros forem semelhantes
+    equal_boards: board x board -> boolean
+    Returns True if the boards are similar
     '''
-    return eh_tabuleiro(t1) and eh_tabuleiro(t2) and t1 == t2
+    return is_board(b1) and is_board(b2) and b1 == b2
 
 
-def tabuleiro_para_str(t):
+def board_to_str(t):
     '''
-    tabuleiro_para_str: tabuleiro -> string
-    Retorna a representacao visual do tabuleiro introduzido
+    board_to_str: board -> string
+    Returns the external representation of a board in the form of a string
     '''
-    tab_cel = list(list(map(cell_to_str, l)) for l in t)        # tab_cel: transforma as celulas em strings
+    tab_cel = list(list(map(cell_to_str, l)) for l in t)        # Transforms the cells in strings
 
     tab_str = "+-------+\n" + \
               "|..." + tab_cel[0][2] + "...|\n" + \
@@ -245,18 +245,18 @@ def porta_x(t, p):
     porta_x: tabuleiro x {"E", "D"} -> tabuleiro
     Aplica a porta X no lado indicado
     '''
-    if eh_tabuleiro(t) and (p == "E" or p == "D"):
+    if is_board(t) and (p == "E" or p == "D"):
         if p == "E":
-            for j in range(tabuleiro_dimensao(t)):
-                tabuleiro_invert_state(t, create_coord(1, j))
+            for j in range(board_dim(t)):
+                board_invert_state(t, create_coord(1, j))
 
         else:
-            for i in range(tabuleiro_dimensao(t)):
-                tabuleiro_invert_state(t, create_coord(i, 1))
+            for i in range(board_dim(t)):
+                board_invert_state(t, create_coord(i, 1))
 
         return t
     else:
-        raise ValueError("porta_x: argumentos invalidos.")
+        raise ValueError("porta_x: invalid arguments.")
 
 
 def porta_z(t, p):
@@ -264,19 +264,19 @@ def porta_z(t, p):
     porta_z: tabuleiro x {"E", "D"} -> tabuleiro
     Aplica a porta Z no lado indicado
     '''
-    if eh_tabuleiro(t) and (p == "E" or p == "D"):
+    if is_board(t) and (p == "E" or p == "D"):
         if p == "E":
-            for j in range(tabuleiro_dimensao(t)):
-                tabuleiro_invert_state(t, create_coord(0, j))
+            for j in range(board_dim(t)):
+                board_invert_state(t, create_coord(0, j))
 
         else:
-            for i in range(tabuleiro_dimensao(t)):
-                tabuleiro_invert_state(t, create_coord(i, 2))
+            for i in range(board_dim(t)):
+                board_invert_state(t, create_coord(i, 2))
 
         return t
 
     else:
-        raise ValueError("porta_z: argumentos invalidos.")
+        raise ValueError("porta_z: invalid arguments.")
 
 
 def porta_h(t, p):
@@ -284,27 +284,27 @@ def porta_h(t, p):
     porta_h: tabuleiro x {"E", "D"} -> tabuleiro
     Aplica a porta H no lado indicado
     '''
-    if eh_tabuleiro(t) and (p == "E" or p == "D"):
+    if is_board(t) and (p == "E" or p == "D"):
         if p == "E":
-            for j in range(tabuleiro_dimensao(t)):
-                cel_1 = tabuleiro_celula(t, create_coord(0, j))
-                cel_2 = tabuleiro_celula(t, create_coord(1, j))      # cel_1 e cel_2: preservam o valor das celulas
+            for j in range(board_dim(t)):
+                cel_1 = board_cell(t, create_coord(0, j))
+                cel_2 = board_cell(t, create_coord(1, j))      # cel_1 e cel_2: preservam o valor das celulas
 
-                tabuleiro_substitui_celula(t, cel_1, create_coord(1, j))
-                tabuleiro_substitui_celula(t, cel_2, create_coord(0, j))
+                board_change_cell(t, cel_1, create_coord(1, j))
+                board_change_cell(t, cel_2, create_coord(0, j))
 
         else:
-            for i in range(tabuleiro_dimensao(t)):
-                cel_1 = tabuleiro_celula(t, create_coord(i, 1))
-                cel_2 = tabuleiro_celula(t, create_coord(i, 2))
+            for i in range(board_dim(t)):
+                cel_1 = board_cell(t, create_coord(i, 1))
+                cel_2 = board_cell(t, create_coord(i, 2))
 
-                tabuleiro_substitui_celula(t, cel_1, create_coord(i, 2))
-                tabuleiro_substitui_celula(t, cel_2, create_coord(i, 1))
+                board_change_cell(t, cel_1, create_coord(i, 2))
+                board_change_cell(t, cel_2, create_coord(i, 1))
 
         return t
 
     else:
-        raise ValueError("porta_h: argumentos invalidos.")
+        raise ValueError("porta_h: invalid arguments.")
 
 
 # Main
@@ -315,26 +315,26 @@ def hello_quantum(s):
     '''
     info = s.split(":")         # info: separa o input em tabuleiro e numero maximo de jogadas
 
-    tab_obj = str_para_tabuleiro(info[0])
+    tab_obj = str_to_board(info[0])
     max_jog = eval(info[1])
 
-    tab = tabuleiro_inicial()
+    tab = init_board()
     jog = max_jog
 
     print("Bem-vindo ao Hello Quantum!", "O seu objetivo e chegar ao tabuleiro:",
-          tabuleiro_para_str(tab_obj), "Comecando com o tabuleiro que se segue:",
-          tabuleiro_para_str(tab), sep="\n")
+          board_to_str(tab_obj), "Comecando com o tabuleiro que se segue:",
+          board_to_str(tab), sep="\n")
 
-    while jog != 0 and not tabuleiros_iguais(tab, tab_obj):
+    while jog != 0 and not equal_boards(tab, tab_obj):
         porta = input("Escolha uma porta para aplicar (X, Z ou H): ")
         qubit = input("Escolha um qubit para analisar (E ou D): ")
 
         tab = {"X": porta_x, "Z": porta_z, "H": porta_h}[porta](tab, qubit)     # dict: associa as letras com as portas
-        print(tabuleiro_para_str(tab))
+        print(board_to_str(tab))
 
         jog -= 1
 
-    if tabuleiros_iguais(tab, tab_obj):
+    if equal_boards(tab, tab_obj):
         print("Parabens, conseguiu converter o tabuleiro em", max_jog - jog, "jogadas!")
 
         return True
