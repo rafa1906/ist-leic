@@ -19,6 +19,6 @@ Further details can be found in *assignment.pdf* (in portuguese).
 
 
 ## Academic details
-This project was developed for FP (Fundamentos da Programação) - a introductory level programming class.
+This project was developed for FP (Fundamentos da Programação) - a first year introductory programming class.
 
 The final grade was **18.38/20.00**.
