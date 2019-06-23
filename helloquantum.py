@@ -227,115 +227,116 @@ def board_to_str(t):
     board_to_str: board -> string
     Returns the external representation of a board in the form of a string
     '''
-    tab_cel = list(list(map(cell_to_str, l)) for l in t)        # Transforms the cells in strings
+    board_cel = list(list(map(cell_to_str, l)) for l in t)        # Transforms the cells in strings
 
-    tab_str = "+-------+\n" + \
-              "|..." + tab_cel[0][2] + "...|\n" + \
-              "|.." + tab_cel[0][1] + "." + tab_cel[1][2] + "..|\n" + \
-              "|." + tab_cel[0][0] + "." + tab_cel[1][1] + "." + tab_cel[2][1] + ".|\n" + \
-              "|.." + tab_cel[1][0] + "." + tab_cel[2][0] + "..|\n" + \
+    board_str = "+-------+\n" + \
+              "|..." + board_cel[0][2] + "...|\n" + \
+              "|.." + board_cel[0][1] + "." + board_cel[1][2] + "..|\n" + \
+              "|." + board_cel[0][0] + "." + board_cel[1][1] + "." + board_cel[2][1] + ".|\n" + \
+              "|.." + board_cel[1][0] + "." + board_cel[2][0] + "..|\n" + \
               "+-------+"
 
-    return tab_str
+    return board_str
 
 
-# Portas
-def porta_x(t, p):
+# Gates
+def x_gate(b, g):
     '''
-    porta_x: tabuleiro x {"E", "D"} -> tabuleiro
-    Aplica a porta X no lado indicado
+    x_gate: b x {"L", "R"} -> board
+    Applies the X gate to the specified side
     '''
-    if is_board(t) and (p == "E" or p == "D"):
-        if p == "E":
-            for j in range(board_dim(t)):
-                board_invert_state(t, create_coord(1, j))
+    if is_board(b) and (g == "L" or g == "R"):
+        if b == "L":
+            for j in range(board_dim(b)):
+                board_invert_state(b, create_coord(1, j))
 
         else:
-            for i in range(board_dim(t)):
-                board_invert_state(t, create_coord(i, 1))
+            for i in range(board_dim(b)):
+                board_invert_state(b, create_coord(i, 1))
 
-        return t
+        return b
     else:
-        raise ValueError("porta_x: invalid arguments.")
+        raise ValueError("x_gate: invalid arguments.")
 
 
-def porta_z(t, p):
+def z_gate(b, g):
     '''
-    porta_z: tabuleiro x {"E", "D"} -> tabuleiro
-    Aplica a porta Z no lado indicado
+    z_gate: board x {"L", "R"} -> board
+    Applies the Z gate to the specified side
     '''
-    if is_board(t) and (p == "E" or p == "D"):
-        if p == "E":
-            for j in range(board_dim(t)):
-                board_invert_state(t, create_coord(0, j))
+    if is_board(b) and (g == "L" or g == "R"):
+        if g == "L":
+            for j in range(board_dim(b)):
+                board_invert_state(b, create_coord(0, j))
 
         else:
-            for i in range(board_dim(t)):
-                board_invert_state(t, create_coord(i, 2))
+            for i in range(board_dim(b)):
+                board_invert_state(b, create_coord(i, 2))
 
-        return t
+        return b
 
     else:
-        raise ValueError("porta_z: invalid arguments.")
+        raise ValueError("z_gate: invalid arguments.")
 
 
-def porta_h(t, p):
+def h_gate(b, g):
     '''
-    porta_h: tabuleiro x {"E", "D"} -> tabuleiro
-    Aplica a porta H no lado indicado
+    h_gate: board x {"L", "R"} -> board
+    Applies the H gate to the specified side
     '''
-    if is_board(t) and (p == "E" or p == "D"):
-        if p == "E":
-            for j in range(board_dim(t)):
-                cel_1 = board_cell(t, create_coord(0, j))
-                cel_2 = board_cell(t, create_coord(1, j))      # cel_1 e cel_2: preservam o valor das celulas
+    if is_board(b) and (g == "L" or g == "R"):
+        if g == "L":
+            for j in range(board_dim(b)):
+                # Saves the cell values
+                cell_1 = board_cell(b, create_coord(0, j))
+                cell_2 = board_cell(b, create_coord(1, j))      
 
-                board_change_cell(t, cel_1, create_coord(1, j))
-                board_change_cell(t, cel_2, create_coord(0, j))
+                board_change_cell(b, cell_1, create_coord(1, j))
+                board_change_cell(b, cell_2, create_coord(0, j))
 
         else:
-            for i in range(board_dim(t)):
-                cel_1 = board_cell(t, create_coord(i, 1))
-                cel_2 = board_cell(t, create_coord(i, 2))
+            for i in range(board_dim(b)):
+                cell_1 = board_cell(b, create_coord(i, 1))
+                cell_2 = board_cell(b, create_coord(i, 2))
 
-                board_change_cell(t, cel_1, create_coord(i, 2))
-                board_change_cell(t, cel_2, create_coord(i, 1))
+                board_change_cell(b, cell_1, create_coord(i, 2))
+                board_change_cell(b, cell_2, create_coord(i, 1))
 
-        return t
+        return b
 
     else:
-        raise ValueError("porta_h: invalid arguments.")
+        raise ValueError("h_gate: invalid arguments.")
 
 
 # Main
 def hello_quantum(s):
     '''
-    hello_quantum: string -> logico
-    Funcao principal que permite jogar um jogo completo de Hello Quantum
+    hello_quantum: string -> boolean
+    Main function; plays a full game of Hello Quantum
     '''
-    info = s.split(":")         # info: separa o input em tabuleiro e numero maximo de jogadas
+    info = s.split(":")         # Splits input into the goal board and max number of plays
 
-    tab_obj = str_to_board(info[0])
-    max_jog = eval(info[1])
+    goal_board = str_to_board(info[0])
+    max_plays = eval(info[1])
 
-    tab = init_board()
-    jog = max_jog
+    board = init_board()
+    plays = max_plays
 
-    print("Bem-vindo ao Hello Quantum!", "O seu objetivo e chegar ao tabuleiro:",
-          board_to_str(tab_obj), "Comecando com o tabuleiro que se segue:",
-          board_to_str(tab), sep="\n")
+    print("Welcome to Hello Quantum!", "Your goal is to get to the board:",
+          board_to_str(goal_board), "Starting with the board:",
+          board_to_str(board), sep="\n")
 
-    while jog != 0 and not equal_boards(tab, tab_obj):
-        porta = input("Escolha uma porta para aplicar (X, Z ou H): ")
-        qubit = input("Escolha um qubit para analisar (E ou D): ")
+    while plays != 0 and not equal_boards(board, goal_board):
+        gate = input("Choose a gate (X, Z or H): ")
+        qubit = input("Choose a qubit (L or R): ")
 
-        tab = {"X": porta_x, "Z": porta_z, "H": porta_h}[porta](tab, qubit)     # dict: associa as letras com as portas
-        print(board_to_str(tab))
+        board = {"X": x_gate, "Z": z_gate, "H": h_gate}[gate](board, qubit)     # Associates the keys with the gates
+        print(board_to_str(board))
 
-        jog -= 1
+        plays -= 1
 
-    if equal_boards(tab, tab_obj):
-        print("Parabens, conseguiu converter o tabuleiro em", max_jog - jog, "jogadas!")
+    if equal_boards(board, goal_board):
+        print("Congratulations, you have won in", max_plays - plays, "plays!")
 
         return True
 
