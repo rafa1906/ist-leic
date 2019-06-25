@@ -1,96 +1,63 @@
 /*
-* Ficheiro: main.c
-* Autor: Rafael Goncalves 92544
-* Descricao: Ficheiro principal do organizador de eventos
+* File: main.c
+* Author: Rafael Goncalves
+* Description: Main file for the event manager
 */
 
 
-/* INCLUDES */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "helper.h"
 
 
-/* PROTOTIPOS */
-void add_event();
-void list_all();
-void list_room();
-void remove_event();
-void change_start();
-void change_duration();
-void change_room();
-void add_part();
-void remove_part();
-bool push_event(Event e, int control);
-Event pop_event(int pos);
-void change_event(char key[], char new_attribute[], int control);
-bool catch_errors(Event e, int control);
-void print_results(Event e);
-char * read_input();
-Event init_event();
-bool is_valid_field(char field[]);
-bool earlier(Event e1, Event e2);
-bool same_time(Event e1, Event e2);
-bool incompatible_times(Event e1, Event e2);
-Date str_to_date(char * str);
-int date_to_int(Date date);
-int date_to_fint(Date date);
-Time str_to_time(char * str);
-int time_to_int(Time time);
-Time get_finish_time(Event e);
+char c, input[STRLEN];          /* Char reader and input buffer */
+Event events[MAXEVENTS];        /* Scheduled events array */
 
 
-/* VARIAVEIS GLOBAIS */
-char c, input[STRLEN];          /* Leitor de caracteres e buffer do input, respetivamente */
-Event events[MAXEVENTS];        /* Armazena os eventos agendados */
-
-
-/* PROGRAMA */
-/* main: Funcao principal do programa; inicializa o vetor events[], que guarda
-         os eventos ja agendados, e determina a acao requirida pelo utilizador */
+/* main: Inits events[] and extracts a command from user input */
 int main() {
     int i;
 
-    for (i = 0; i < MAXEVENTS; i++) { events[i] = init_event(); }   /* Inicializa o vetor events[] */
+    for (i = 0; i < MAXEVENTS; i++) { events[i] = init_event(); }   /* Inits events[] */
 
-    while ((c = getchar()) != 'x') {        /* Determina se o programa deve encerrar */
+    while ((c = getchar()) != 'x') {        /* Exits if user enters 'x' */
         getchar();
 
         switch (c) {
-            case 'a':                       /* Adiciona um evento */
+            case 'a':                       /* Adds an event */
                 add_event();
                 break;
 
-            case 'l':                       /* Lista todos os eventos */
+            case 'l':                       /* Lists all events */
                 list_all();
                 break;
 
-            case 's':                       /* Lista os eventos de uma dada sala */
+            case 's':                       /* Lists all events in a room */
                 list_room();
                 break;
 
-            case 'r':                       /* Remove um evento */
+            case 'r':                       /* Removes an event */
                 remove_event();
                 break;
 
-            case 'i':                       /* Altera a hora de comeco de um evento */
+            case 'i':                       /* Changes event start time  */
                 change_start();
                 break;
 
-            case 't':                       /* Altera a duracao de um evento */
+            case 't':                       /* Changes event duration */
                 change_duration();
                 break;
 
-            case 'm':                       /* Altera a sala de um evento */
+            case 'm':                       /* Changes event room */
                 change_room();
                 break;
 
-            case 'A':                       /* Adiciona um participante a um evento */
+            case 'A':                       /* Adds a participant to an event */
                 add_part();
                 break;
 
-            case 'R':                       /* Remove um participante a um evento */
+            case 'R':                       /* Removes a participant from an event */
                 remove_part();
                 break;
 
@@ -102,14 +69,13 @@ int main() {
     return 0;
 }
 
-/* add_event: Funcao responsavel pelo agendamento de eventos; le os atributos do
-              standard input */
+/* add_event: Adds an event according to user input */
 void add_event() {
     int i;
-    char buffer[STRLEN];            /* Buffer para a leitura de input */
-    Event event = init_event();     /* Inicializa o evento a adicionar */
+    char buffer[STRLEN];            /* Input buffer */
+    Event event = init_event();     /* Inits the event */
 
-    /* Extrai os atributos do evento a adicionar */
+    /* Extracts event data */
     strcpy(event.description, read_input(input));
     event.date = str_to_date(strcpy(buffer, read_input(input)));
     event.start = str_to_time(strcpy(buffer, read_input(input)));
@@ -117,88 +83,85 @@ void add_event() {
     event.room = atoi(strcpy(buffer, read_input(input)));
     strcpy(event.organiser, read_input(input));
 
-    /* Loop que extrai os participantes; se existirem menos de 3 sai do loop */
+    /* Extracts participants */
     for (i = 0; i < MAXPART; i++) {
         strcpy(event.participants[i], read_input(input));
 
-        if (c == '\n') { break; }   /* Testa pelo caracter de fim de linha */
+        if (c == '\n') { break; }   /* Breaks if there are no more participants to add */
     }
 
-    push_event(event, 0);           /* Envia o evento para push e o valor de controlo 0 */
+    push_event(event, 0);           /* Pushes event with control value 0 */
 }
 
-/* list_all: Funcao que apresenta no standard output todos os eventos ja agendados
-             por ordem cronologica */
+/* list_all: Lists all events in stdio by chronological order */
 void list_all() {
     int i;
 
-    /* Loop que percorre todos os eventos inicializados e os apresenta no standard output */
+    /* Traverses events[] */
     for (i = 0; i < MAXEVENTS; i++) {
-        if (!is_valid_field(events[i].description)) { break; }  /* Testa se o evento e valido */
+        if (!is_valid_field(events[i].description)) { break; }  /* Breaks if event is not valid */
 
         print_results(events[i]);
     }
 }
 
-/* list_room: Funcao que apresenta no standard output todos os eventos ja agendados
-              para uma dada sala por ordem cronologica */
+/* list_room: Lists all events in a room in stdio by chronological order */
 void list_room() {
     int i, key;
 
-    key = atoi(read_input(input));      /* Extrai a sala requirida */
+    key = atoi(read_input(input));      /* Extracts the room */
 
-    /* Loop que percorre todos os eventos inicializados cuja sala e semelhante
-       a guardada na variavel de controlo key e os apresenta no standard output */
+    /* Traverses events[] and compares the rooms with key */
     for (i = 0; i < MAXEVENTS; i++) {
-        if (!is_valid_field(events[i].description)) { break; }  /* Testa se o evento e valido */
+        if (!is_valid_field(events[i].description)) { break; }  /* Breaks if event is not valid */
         if (events[i].room == key) { print_results(events[i]); }
     }
 }
 
-/* remove_event: Funcao que desmarca um dado evento */
+/* remove_event: Removes an event */
 void remove_event() {
     int i;
     char key[STRLEN];
 
-    strcpy(key, read_input(input));     /* Extrai a descricao do evento requirido */
+    strcpy(key, read_input(input));     /* Extracts description */
 
-    /* Loop que procura o evento requirido; caso o encontre, faz pop a este evento */
+    /* Looks for the event; if found, pops it */
     for (i = 0; i < MAXEVENTS; i++) {
-        if (!is_valid_field(events[i].description)) { break; }  /* Testa se o evento e valido */
+        if (!is_valid_field(events[i].description)) { break; }  /* Breaks if event is not valid */
         if (strcmp(events[i].description, key) == 0) { pop_event(i); return; }
     }
 
-    printf("Evento %s inexistente.\n", key);    /* Mensagem de erro para caso o evento nao exista */
+    printf("Event %s not found.\n", key);    /* Error message if event does not exist*/
 }
 
-/* change_start: Funcao que muda a hora de inicio de um dado evento */
+/* change_start: Changes start time */
 void change_start() {
     char key[STRLEN], new_start[STRLEN];
 
-    strcpy(key, read_input(input));         /* Extrai a descricao do evento requirido */
-    strcpy(new_start, read_input(input));   /* Extrai a nova hora de inicio */
+    strcpy(key, read_input(input));         /* Extracts description */
+    strcpy(new_start, read_input(input));   /* Extracts new start time */
 
-    change_event(key, new_start, 0);        /* Chama change_event com o valor de controlo 0 */
+    change_event(key, new_start, 0);        /* Calls change_event with control value 0 */
 }
 
-/* change_duration: Funcao que muda a duracao de um dado evento */
+/* change_duration: Changes duration */
 void change_duration() {
     char key[STRLEN], new_duration[STRLEN];
 
-    strcpy(key, read_input(input));             /* Extrai a descricao do evento requirido */
-    strcpy(new_duration, read_input(input));    /* Extrai a nova duracao */
+    strcpy(key, read_input(input));             /* Extracts description */
+    strcpy(new_duration, read_input(input));    /* Extracts new duration */
 
-    change_event(key, new_duration, 1);         /* Chama change_event com o valor de controlo 1 */
+    change_event(key, new_duration, 1);         /* Calls change_event with control value 1 */
 }
 
-/* change_room: Funcao que muda a sala de um dado evento */
+/* change_room: Changes room */
 void change_room() {
     char key[STRLEN], new_room[STRLEN];
 
-    strcpy(key, read_input(input));             /* Extrai a descricao do evento requirido */
-    strcpy(new_room, read_input(input));        /* Extrai a nova sala */
+    strcpy(key, read_input(input));             /* Extracts description */
+    strcpy(new_room, read_input(input));        /* Extracts new room */
 
-    change_event(key, new_room, 2);             /* Chama change_event com o valor de controlo 2 */
+    change_event(key, new_room, 2);             /* Calls change_event with control value 2 */
 }
 
 /* add_part: Funcao que adiciona um participante a um evento */
