@@ -81,7 +81,7 @@ void add_event() {
     event.start = str_to_time(strcpy(buffer, read_input(input)));
     event.duration = atoi(strcpy(buffer, read_input(input)));
     event.room = atoi(strcpy(buffer, read_input(input)));
-    strcpy(event.organiser, read_input(input));
+    strcpy(event.organizer, read_input(input));
 
     /* Extracts participants */
     for (i = 0; i < MAXPART; i++) {
@@ -131,7 +131,7 @@ void remove_event() {
         if (strcmp(events[i].description, key) == 0) { pop_event(i); return; }
     }
 
-    printf("Event %s not found.\n", key);    /* Error message if event does not exist*/
+    printf("Event %s not found.\n", key);    /* Error message if event does not exist */
 }
 
 /* change_start: Changes start time */
@@ -164,84 +164,80 @@ void change_room() {
     change_event(key, new_room, 2);             /* Calls change_event with control value 2 */
 }
 
-/* add_part: Funcao que adiciona um participante a um evento */
+/* add_part: Adds a new participant */
 void add_part() {
     int i, j, ver = 0;
     char key[STRLEN], new_part[STRLEN];
-    Event old_event, changed_event;         /* Variaveis para guardar o evento original e o alterado */
+    Event old_event, changed_event;         /* Will store the old and the new event */
 
-    strcpy(key, read_input(input));             /* Extrai a descricao do evento requirido */
-    strcpy(new_part, read_input(input));        /* Extrai o novo participante */
+    strcpy(key, read_input(input));             /* Extracts description */
+    strcpy(new_part, read_input(input));        /* Extracts new participant */
 
-    /* Loop que procura o evento requirido; caso o encontre, tenta adicionar o participante */
+    /* Searches for the event; if found, tries to add the new participant */
     for (i = 0; i < MAXEVENTS; i++) {
-        if (!is_valid_field(events[i].description)) { break; }  /* Testa se o evento e valido */
-        if (strcmp(events[i].description, key) == 0) {          /* Testa por match */
+        if (!is_valid_field(events[i].description)) { break; }  /* Breaks if event is not valid */
+        if (strcmp(events[i].description, key) == 0) {          /* Tests for a match */
 
-            /* Loop que percorre os participantes ja adicionados; se houver match com
-               algum destes, sai da funcao; se nao, sai do ciclo e ativa o verificador
-               ver */
+            /* Checks if the participant was already added */
             for (j = 0; j < MAXPART; j++) {
                 if (strcmp(events[i].participants[j], new_part) == 0) { return; }
                 if (!is_valid_field(events[i].participants[j])) { ver = 1; break; }
             }
 
-            /* Se o evento ja tiver 3 participantes, uma mensagem de erro e apresentada
-               e saimos da funcao */
+            /* Displays an error message if the event is already full */
             if (ver == 0) {
-                printf("Impossivel adicionar participante. Evento %s ja tem 3 participantes.\n", key);
+                printf("Impossible to add participant. Event %s is already full.\n", key);
 
                 return;
             }
 
-            old_event = pop_event(i);           /* Extrai o evento original */
-            changed_event = old_event;          /* Cria uma copia do evento para alteracao */
+            old_event = pop_event(i);           /* Extracts original event */
+            changed_event = old_event;          /* Creates a copy */
 
-            /* Adiciona um novo participante na posicao j */
+            /* Adds a new participant */
             strcpy(changed_event.participants[j], new_part);
 
-            /* Tenta dar push ao evento alterado, se nao for possivel, volta a dar
-               push ao antigo */
+            /* Tries to push the new event; if not possible, pushes the old one */
             if (!push_event(changed_event, 1)) { push_event(old_event, 1); }
 
             return;
         }
     }
 
-    printf("Evento %s inexistente.\n", key);    /* Mensagem de erro para o caso do evento nao existir */
+    printf("Event %s not found.\n", key);    /* Error message if event does not exist */
 }
 
-/* remove_part: Funcao que remove um participante a um evento */
+/* remove_part: Removes a participant */
 void remove_part() {
     int i, j, k;
     char key[STRLEN], del_part[STRLEN];
 
-    strcpy(key, read_input(input));             /* Extrai a descricao do evento requirido */
-    strcpy(del_part, read_input(input));        /* Extrai o participante a eliminar */
+    strcpy(key, read_input(input));             /* Extracts description */
+    strcpy(del_part, read_input(input));        /* Extracts the participant to be removed */
 
-    /* Loop que procura o evento requirido; caso o encontre, tenta eliminar o participante */
+    /* Searches for the event; if found, tries to delete the participant */
     for (i = 0; i < MAXEVENTS; i++) {
-        if (!is_valid_field(events[i].description)) { break; }  /* Testa se o evento e valido */
-        if (strcmp(events[i].description, key) == 0) {          /* Testa por match */
-            for (j = 0; j < MAXPART; j++) {                     /* Percorre os participantes */
+        if (!is_valid_field(events[i].description)) { break; }  /* Breaks if event is not valid */
+        if (strcmp(events[i].description, key) == 0) {          /* Tests for a match */
+            /* Loops through the participants */
+            for (j = 0; j < MAXPART; j++) {
 
-                /* Se houver match mas o evento so tiver um participante, retorna uma
-                   uma mensagem de erro e sai da funcao */
-                    if (strcmp(events[i].participants[j], del_part) == 0 &&
-                        !is_valid_field(events[i].participants[1])) {
-                    printf("Impossivel remover participante. Participante %s e o unico participante no evento %s.\n",
+                /* Displays an error message if the participant in question is
+                   the only one in the event */
+                if (strcmp(events[i].participants[j], del_part) == 0 &&
+                    !is_valid_field(events[i].participants[1])) {
+                    printf("Impossible to remove participant. Participant \
+                            %s is the only participant in event %s.\n",
                             events[i].participants[j], key);
 
                     return;
                 }
 
-                /* Se houver match e o evento tiver mais que um participante, elimina o participante do
-                   vetor que contem os participantes e ajusta-o, retrocedendo todos os participantes
-                   posteriores */
+                /* If there is a match and the event has more than one participant,
+                   the participant is removed */
                 if (strcmp(events[i].participants[j], del_part) == 0) {
-                    for (k = j; k < MAXPART - 1; k++) {
+                    for (k = j; k < MAXPART - 1; k++)
                         strcpy(events[i].participants[k], events[i].participants[k + 1]);
-                    }
 
                     strcpy(events[i].participants[2], "NULL");
                 }
@@ -251,33 +247,30 @@ void remove_part() {
         }
     }
 
-    printf("Evento %s inexistente.\n", key);    /* Mensagem de erro para o caso do evento nao existir */
+    printf("Event %s not found.\n", key);    /* Error message if event does not exist */
 }
 
-/* push_event: Funcao que tenta colocar um evento no vetor events[] e que informa se
-               se essa operacao e possivel ou nao */
+/* push_event: Tries to push an event to events[] */
 bool push_event(Event e, int control) {
     int i = 0;
-    Event temp, temp_aux;           /* Variaveis temporarias para a organizacao do vetor events[] */
+    Event temp, temp_aux;
 
-    if (catch_errors(e, control)) { return false; }     /* Verifica se o evento possui erros */
+    if (catch_errors(e, control)) { return false; }     /* Checks if the event has any errors */
 
-    /* Verifica se o evento na posicao i ja foi inicializado e se o evento a adicionar e anterior
-       a esse evento; enquanto nao for, incrementa i; quando for, sai do ciclo */
+    /* Determines where to put the event (according to time of start) */
     while (is_valid_field(events[i].description)) {
-        if (earlier(e, events[i]) || (same_time(e, events[i]) && e.room < events[i].room)) {
+        if (earlier(e, events[i]) || (same_time(e, events[i]) && e.room < events[i].room))
             break;
-        }
 
         i++;
     }
 
-    temp = events[i];       /* Preserva o evento existente na posicao i */
-    events[i] = e;          /* Coloca o evento a adicionar na posicao i */
+    temp = events[i];       /* Stores current event */
+    events[i] = e;          /* Adds new event in place of current event */
 
     i++;
 
-    /* Enquanto os eventos forem validos, faz um right shift no vetor events[] */
+    /* Right shifts events[] */
     while (is_valid_field(events[i-1].description)) {
         temp_aux = temp;
         temp = events[i];
@@ -290,14 +283,14 @@ bool push_event(Event e, int control) {
     return true;
 }
 
-/* pop_event: Funcao que retira um evento do vetor events[] e devolve esse evento */
+/* pop_event: Pops events[pos] */
 Event pop_event(int pos) {
     int j;
-    Event e = events[pos];      /* Guarda o evento designado */
+    Event e = events[pos];      /* Stores the event to pop */
 
-    events[pos] = init_event();     /* Elimina o evento do vetor events[] */
+    events[pos] = init_event();     /* Clears events[pos] */
 
-    /* Enquanto os eventos forem validos, faz um left shift no vetor events[] */
+    /* Left shifts events[] */
     for (j = pos + 1; j < MAXEVENTS; j++) {
         if (!is_valid_field(events[j].description)) { break; }
 
@@ -309,80 +302,76 @@ Event pop_event(int pos) {
     return e;
 }
 
-/* change_event: Funcao generica que altera um atributo a um evento */
+/* change_event: Changes an event attribute */
 void change_event(char key[], char new_attribute[], int control) {
     int i;
-    Event old_event, changed_event;         /* Variaveis para guardar o evento original e o alterado */
+    Event old_event, changed_event;         /* Will store the old and the new event */
 
-    /* Loop que procura o evento requirido; caso o encontre, tenta alterar o atributo requirido */
+    /* Searches for the event; if found, changes the specified attribute */
     for (i = 0; i < MAXEVENTS; i++) {
-        if (!is_valid_field(events[i].description)) { break; }  /* Testa se o evento e valido */
+        if (!is_valid_field(events[i].description)) { break; }  /* Breaks if event is not valid */
 
-        if (strcmp(events[i].description, key) == 0) {      /* Testa por match */
-            old_event = pop_event(i);           /* Extrai o evento original */
-            changed_event = old_event;          /* Cria uma copia do evento para alteracao */
+        /* Tests for a match */
+        if (strcmp(events[i].description, key) == 0) {
+            old_event = pop_event(i);           /* Extracts original event */
+            changed_event = old_event;          /* Creates a copy */
 
-            /* If's que alteram os atributos indicados pela variavel de controlo */
+            /* Decides what operation to execute in accordance with the control variable */
             if (control == 0) { changed_event.start = str_to_time(new_attribute); }
             if (control == 1) { changed_event.duration = atoi(new_attribute); }
             if (control == 2) { changed_event.room = atoi(new_attribute); }
 
-            /* Tenta dar push ao evento alterado, se nao for possivel, volta a dar
-               push ao antigo */
+            /* Tries to push the new event; if not possible, pushes the old one */
             if (!push_event(changed_event, 0)) { push_event(old_event, 0); }
 
             return;
         }
     }
 
-    printf("Evento %s inexistente.\n", key);    /* Mensagem de erro para o caso do evento nao existir */
+    printf("Event %s not found.\n", key);    /* Error message if event does not exist */
 }
 
-/* catch_errors: Funcao responsavel pela detecao de erros genericos */
+/* catch_errors: Catches generic errors */
 bool catch_errors(Event e, int control) {
     int i, j, k, ver = 0;
-    char atendees[MAXPEOPLE][STRLEN];
+    char attendees[MAXPEOPLE][STRLEN];
 
-    /* Cria um vetor que contem todos os presentes num dado evento */
-    strcpy(atendees[0], e.organiser);
-    strcpy(atendees[1], e.participants[0]);
-    strcpy(atendees[2], e.participants[1]);
-    strcpy(atendees[3], e.participants[2]);
+    /* Stores all attendees (organizer and participants) */
+    strcpy(attendees[0], e.organizer);
+    strcpy(attendees[1], e.participants[0]);
+    strcpy(attendees[2], e.participants[1]);
+    strcpy(attendees[3], e.participants[2]);
 
-    /* Loop que procura incompatibilidades entre o evento a adicionar e os eventos ja agendados */
+    /* Searches for conflicts between the event to add and those already in events[]  */
     for (i = 0; i < MAXEVENTS; i++) {
-        if (!is_valid_field(events[i].description)) { break; }  /* Testa se o evento e valido */
+        if (!is_valid_field(events[i].description)) { break; }  /* Breaks if event is not valid */
 
-        /* Caso haja incompatibilidade de horarios para uma dada sala, imprime uma mensagem
-           de erro */
+        /* Checks for time conflicts */
         if (date_to_int(e.date) == date_to_int(events[i].date) &&
             incompatible_times(e, events[i])) {
             if (e.room == events[i].room) {
-                printf("Impossivel agendar evento %s. Sala%d ocupada.\n", e.description,
-                        e.room);
+                printf("Impossible to schedule event %s. Room %d occupied.\n",
+                        e.description, e.room);
 
                 return true;
             }
 
-            /* Loops que percorrem, respetivamente, os presentes no evento a adicionar e os
-               participantes dos eventos ja agendados */
+            /* Checks for conflicts regarding attendees */
             for (j = 0; j < MAXPEOPLE; j++) {
                 for (k = 0; k < MAXPART; k++) {
 
-                    /* Caso os presentes no evento a adicionar entrem em conflito com os
-                       participantes nos eventos ja agendados, imprime uma mensagem de erro */
-                    if (is_valid_field(atendees[j]) &&
-                        (strcmp(atendees[j], events[i].participants[k]) == 0 ||
-                         strcmp(atendees[j], events[i].organiser) == 0)) {
-                            if (control == 0) {     /* Chamado pelas funcoes que alteram atributos */
-                                printf("Impossivel agendar evento %s. Participante %s tem um evento sobreposto.\n",
-                                        e.description, atendees[j]);
-                            }
+                    /* Prints an error message if an attendee already has another
+                       event scheduled in the same time frame */
+                    if (is_valid_field(attendees[j]) &&
+                        (strcmp(attendees[j], events[i].participants[k]) == 0 ||
+                         strcmp(attendees[j], events[i].organizer) == 0)) {
+                            if (control == 0)     /* If a function changes attributes */
+                                printf("Impossible to schedule event %s. Participant \
+                                        %s is occupied.\n", e.description, attendees[j]);
 
-                            else {      /* Chamado pela funcao que adiciona participantes */
-                                printf("Impossivel adicionar participante. Participante %s tem um evento sobreposto.\n",
-                                        atendees[j]);
-                            }
+                            else      /* If a function adds participants */
+                                printf("Impossible to add participant. Participant %s \
+                                        is occupied.\n", attendees[j]);
 
                             ver = 1;
                             break;
@@ -395,15 +384,15 @@ bool catch_errors(Event e, int control) {
     return ver == 1;
 }
 
-/* print_results: Funcao que imprime os dados de um evento formatados */
+/* print_results: Prints formatted event data */
 void print_results(Event e) {
     int i;
 
-    /* Imprime os dados genericos com a formatacao indicada */
-    printf("%s %08d %04d %d Sala%d %s\n*", e.description, date_to_fint(e.date),
-            time_to_int(e.start), e.duration, e.room, e.organiser);
+    /* Prints an event's generic data */
+    printf("%s - %08d - %04d - %d - Room %d - %s\n*", e.description, date_to_fint(e.date),
+            time_to_int(e.start), e.duration, e.room, e.organizer);
 
-    /* Imprime os participantes numa nova linha */
+    /* Prints the participants in a new line */
     for (i = 0; i < MAXPART; i++) {
         if (is_valid_field(e.participants[i])) { printf(" %s", e.participants[i]); }
     }
@@ -411,12 +400,12 @@ void print_results(Event e) {
     putchar('\n');
 }
 
-/* read_input: Funcao que le o input de acordo com a formatacao introduzida */
+/* read_input: Reads input */
 char * read_input(char input[]) {
     int i = 0;
-    char * in_ptr = input;      /* Pointer para o buffer do input */
+    char * in_ptr = input;      /* Pointer to input buffer */
 
-    /* Ciclo while que le todos os caracteres numa string ate encontrar ':' ou '\n' */
+    /* Reads all chars until a ':' or '\n' is found */
     while ((c = getchar()) != ':' && c != '\n') { input[i] = c; i++; }
 
     input[i] = '\0';
@@ -424,28 +413,26 @@ char * read_input(char input[]) {
     return in_ptr;
 }
 
-/* init_event: Inicializa um evento e retorna-o */
+/* init_event: Inits an event */
 Event init_event() {
     Event e;
     int i;
 
-    /* Coloca a string "NULL" como indicador que o espaco esta disponivel para
-       o agendamento de um evento e atribui uma data e hora genericas */
+    /* Sets the description to "NULL" and the date and start time to generic values */
     strcpy(e.description, "NULL");
     e.date = str_to_date("01012019");
     e.start = str_to_time("0000");
 
-    for (i = 0; i < MAXPART; i++) {
+    for (i = 0; i < MAXPART; i++)
         strcpy(e.participants[i], "NULL");
-    }
 
     return e;
 }
 
-/* is_valid_field: Determina se um campo e valido ou nao */
+/* is_valid_field: Determines if a field is valid */
 bool is_valid_field(char field[]) { return strcmp(field, "NULL") != 0; }
 
-/* earlier: Funcao que verifica se o evento e1 ocorreu antes do evento e2 */
+/* earlier: Verifies if e1 occurred earlier than e2 */
 bool earlier(Event e1, Event e2) {
     int d1_aux = time_to_int(e1.start) + date_to_int(e1.date) * SHIFTFOUR;
     int d2_aux = time_to_int(e2.start) + date_to_int(e2.date) * SHIFTFOUR;
@@ -453,7 +440,7 @@ bool earlier(Event e1, Event e2) {
     return d1_aux < d2_aux;
 }
 
-/* same_time: Funcao que verifica se o evento e1 ocorreu ao mesmo tempo que o evento e2 */
+/* same_time: Verifies if e1 occurred at the same time as e2 */
 bool same_time(Event e1, Event e2) {
     int d1_aux = time_to_int(e1.start) + date_to_int(e1.date) * SHIFTFOUR;
     int d2_aux = time_to_int(e2.start) + date_to_int(e2.date) * SHIFTFOUR;
@@ -461,25 +448,22 @@ bool same_time(Event e1, Event e2) {
     return d1_aux == d2_aux;
 }
 
-/* incompatible_times: Funcao que verifica se o horario do evento e1 e incompativel com
-                       o horario do evento e2 */
+/* incompatible_times: Verifies if the times in e1 and e2 are incompatible */
 bool incompatible_times(Event e1, Event e2) {
     int e1_start = time_to_int(e1.start), e1_finish = time_to_int(get_finish_time(e1));
     int e2_start = time_to_int(e2.start), e2_finish = time_to_int(get_finish_time(e2));
 
-    /* Sera compativel se o final do evento e1 for anterior ao comeco do evento e2
-       ou se o comeco do evento e1 for posterior ao fim do evento e2 */
     bool compatible = e1_finish <= e2_start || e1_start >= e2_finish;
 
     return !compatible;
 }
 
-/* str_to_date: Transforma uma string no tipo data */
+/* str_to_date: Transforms a string in a date */
 Date str_to_date(char str[]) {
-    int temp = atoi(str);       /* Armazena temporariamente o valor em int da data */
+    int temp = atoi(str);       /* Stores the int value of the date */
     Date date;
 
-    /* Extrai o ano, o mes e o dia */
+    /* Extracts year, month and day */
     date.year = temp % SHIFTFOUR;
     date.month = (temp / SHIFTFOUR) % SHIFTTWO;
     date.day = (temp / SHIFTFOUR) / SHIFTTWO;
@@ -487,38 +471,37 @@ Date str_to_date(char str[]) {
     return date;
 }
 
-/* date_to_int: Converte uma data para int */
+/* date_to_int: Converts a date to an int */
 int date_to_int(Date date) { return date.day + date.month * SHIFTTWO + date.year * SHIFTFOUR; }
 
-/* date_to_fint: Converte uma data para um int formatado, ou seja, um int que pode ser escrito
-                 no standard output */
+/* date_to_fint: Converts a date to a formatted int (in accordance with expected output) */
 int date_to_fint(Date date) { return date.year + date.month * SHIFTFOUR + date.day * SHIFTSIX; }
 
-/* str_to_time: Transforma uma string no tipo tempo */
+/* str_to_time: Transforms a string in a time */
 Time str_to_time(char str[]) {
     int temp = atoi(str);
     Time start;
 
-    /* Extrai os minutos e as horas */
+    /* Extracts minutes and hour */
     start.min = temp % SHIFTTWO;
     start.hour = temp / SHIFTTWO;
 
     return start;
 }
 
-/* time_to_int: Converte um tempo para int */
+/* time_to_int: Converts a time to an int */
 int time_to_int(Time start) { return start.min + start.hour * SHIFTTWO; }
 
-/* Calcula a hora a que o evento termina */
+/* get_finish_time: Extracts an event's finish time */
 Time get_finish_time(Event e) {
-    /* Converte o tempo para apenas minutos */
+    /* Converts a time to minutes */
     int start_min = e.start.min + e.start.hour * MINUTES, temp;
 
     Time finish;
 
-    temp = start_min + e.duration;      /* Adiciona ao tempo em minutos a duracao */
+    temp = start_min + e.duration;      /* Adds the duration in minutes to start_min */
 
-    /* Calcula as horas e os minutos do final do evento */
+    /* Extracts the finish time */
     finish.min = temp % MINUTES;
     finish.hour = temp / MINUTES;
 
