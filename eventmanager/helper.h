@@ -15,26 +15,26 @@
 #define SHIFTSIX 1000000        /* Left shift of 6 */
 
 
-typedef enum { false, true } bool;      /* Boolean */
+typedef enum { false, true } bool;          /* Boolean */
 
-typedef struct date {       /* Holds a date */
+typedef struct date {                       /* Holds a date */
     int day;
     int month;
     int year;
 } Date;
 
-typedef struct time {       /* Holds a time */
+typedef struct time {                       /* Holds a time */
     int hour;
     int min;
 } Time;
 
-typedef struct event {      /* Holds an event */
-    char description[STRLEN];     /* Event description */
-    Date date;     /* Event date */
-    Time start;     /* Event start time */
-    int duration;     /* Event duration */
-    int room;     /* Event room */
-    char organiser[STRLEN];     /* Event organiser */
+typedef struct event {                      /* Holds an event */
+    char description[STRLEN];               /* Event description */
+    Date date;                              /* Event date */
+    Time start;                             /* Event start time */
+    int duration;                           /* Event duration */
+    int room;                               /* Event room */
+    char organizer[STRLEN];                 /* Event organizer */
     char participants[MAXPART][STRLEN];     /* Event participants (up to 3) */
 } Event;
 
