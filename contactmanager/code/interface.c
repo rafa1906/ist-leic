@@ -1,35 +1,33 @@
 /*
-* Ficheiro: interface.c
-* Autor: Rafael Goncalves 92544
-* Descricao: Ficheiro principal da interface com o utilizador
+* File: interface.c
+* Author: Rafael Goncalves
+* Descricao: Main UI file
 */
 
-/* INCLUDES */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "interface.h"
 
-/* PROGRAMA */
-/* init: Aloca memoria para as estruturas de dados utilizadas (lista ligada,
-         hashtable dos contactos e hashtable dos dominios) */
+
+/* init: Allocates memory for the data structures */
 void init() {
     init_list();
     init_ctable();
     init_dtable();
 }
 
-/* quit: Liberta a memoria alocada aquando durante o uso das estruturas de dados */
+/* quit: Frees the memory used by the data structures */
 void quit() {
     free_list();
     free_ctable();
     free_dtable();
 }
 
-/* add_contact: Le um nome, um email e um numero do stdio e regista-o como um
-                contacto, guardando as informacoes introduzidas na lista ligada
-                e na hashtable dos contactos e a informacao relativa ao dominio
-                na hashtable dos dominios */
+/* add_contact: Reads a name, an email and a phone number from stdio; stores the
+                contact info in the contact list and hashtable and the domain
+                info in the domain hashtable */
 void add_contact() {
     Contact *new_contact;
     entry new_entry;
@@ -40,25 +38,22 @@ void add_contact() {
 
     strcpy(temp, email);
     strtok(temp, "@");
-    domain = strtok(NULL, " ");         /* Extrai o dominio do email */
+    domain = strtok(NULL, " ");         /* Extracts email domain */
 
-    /* Tenta adicionar o contacto a hashtable dos contactos e a lista ligada
-       (caso o nome nao esteja ja registado) */
+    /* Tries to add the contact */
     new_contact = create_contact(name, email, phone);
     new_entry = add_entry(new_contact->name, new_contact);
 
-    /* Caso tenha sido possivel adicionar o contacto, regista a ocorrencia do
-       dominio */
+    /* If the contact was added sucessfully, updates the domain hashtable */
     if (new_entry != NULL) { new_entry->target->contact->domain_occ = add_occ(domain); }
 }
 
-/* list_all: Percorre a lista ligada que guarda as informacoes dos contactos e
-             imprime-os por ordem de introducao */
+/* list_all: Traverses the contact list and prints contact info */
 void list_all() {
     traverse_list();
 }
 
-/* search_name: Procura um contacto pelo nome e imprime os dados desse contacto */
+/* search_name: Searches a contact by name and prints its info */
 void search_name() {
     char name[MAXNAME];
 
@@ -67,8 +62,7 @@ void search_name() {
     search_by_hash(name);
 }
 
-/* remove_contact: Remove um contacto pelo nome, eliminando-o das estruturas de
-                   dados que o referenciam e atualizando o contador de dominios */
+/* remove_contact: Removes a contact; adjusts the domain hashtable in the process */
 void remove_contact() {
     char name[MAXNAME];
 
@@ -77,8 +71,7 @@ void remove_contact() {
     delete_by_hash(name);
 }
 
-/* change_email: Altera o email de um contacto dado o seu nome, atualizando o
-                 contandor de dominios */
+/* change_email: Changes an email; adjusts the domain hashtable in the process */
 void change_email() {
     char name[MAXNAME], new_email[MAXEMAIL], temp[MAXEMAIL];
     char *domain;
@@ -87,13 +80,13 @@ void change_email() {
 
     strcpy(temp, new_email);
     strtok(temp, "@");
-    domain = strtok(NULL, " ");         /* Extrai o dominio do email */
+    domain = strtok(NULL, " ");         /* Extracts email domain */
 
     change_email_by_hash(name, new_email, domain);
 }
 
-/* domain_occ: Procura na hashtable dos dominios o numero de ocorrencias de um
-               dado dominio e imprime o valor */
+/* domain_occ: Searches for the number of occurrences of a given domain and
+               presents it in stdio */
 void domain_occ() {
     int occ = 0;
     char domain[MAXEMAIL];
