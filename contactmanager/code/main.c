@@ -15,7 +15,7 @@
 int main() {
     char c;
 
-    init();         /* Allocates memory for the data structures */
+    init();
 
     do {
         scanf("%c", &c);
@@ -50,7 +50,7 @@ int main() {
         }
     } while (c != 'x');         /* Exits if user enters 'x' */
 
-    quit();         /* Frees the memory used by the data structures */
+    quit();
 
     return 0;
 }
