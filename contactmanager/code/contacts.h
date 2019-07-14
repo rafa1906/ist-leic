@@ -1,21 +1,21 @@
 /*
-* Ficheiro: contacts.h
-* Autor: Rafael Goncalves 92544
-* Descricao: Header do ficheiro responsavel pelo registo de contactos
+* File: contacts.h
+* Author: Rafael Goncalves
+* Description: Header for the contact register
 */
+
 
 #ifndef CONTACT_H
 #define CONTACT_H
 
-/* INCLUDES */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "dtable.h"
 
-/* ESTRUTURAS */
-/* contact: Guarda um contacto; e composta por um nome, um email e um numero de
-            telefenone (todos strings) e por um ponteiro que aponta para o par
-            que regista o dominio (ver dtable) */
+
+/* contact: Stores a contact; holds a name, an email, a phone (all strings) and
+            a pointer to the respective domain in the domain hashtable */
 typedef struct {
     char *name;
     char *email;
@@ -23,19 +23,17 @@ typedef struct {
     pair domain_occ;
 } Contact;
 
-/* link: Ponteiro para um no da lista duplamente ligada; e composta por um
-         ponteiro para o contacto em questao, e por ponteiros para os nos
-         anterior e seguinte */
+/* link: Pointer to a node in the doubly linked list that stores the contacts */
 typedef struct node {
     Contact *contact;
     struct node *prev;
     struct node *next;
 } * link;
 
-/* VARIAVEIS */
-link head, tail;    /* Ponteiros para a primeira e ultima posicao da lista */
 
-/* PROTOTIPOS */
+link head, tail;    /* First and last elements in the list, respectively */
+
+
 void init_list();
 void free_list();
 link push_contact();
