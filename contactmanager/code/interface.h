@@ -1,25 +1,26 @@
 /*
-* Ficheiro: interface.h
-* Autor: Rafael Goncalves 92544
-* Descricao: Header do ficheiro responsavel pela interface com o utilizador
+* File: interface.h
+* Author: Rafael Goncalves
+* Description: Header for the UI file
 */
+
 
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-/* INCLUDES */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "contacts.h"
 #include "ctable.h"
 #include "dtable.h"
 
-/* CONSTANTES */
+
 #define MAXNAME 1024
 #define MAXEMAIL 512
 #define MAXNUMBER 64
 
-/* PROTOTIPOS */
+
 void init();
 void quit();
 void add_contact();
