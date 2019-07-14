@@ -44,7 +44,7 @@ void add_contact() {
     new_contact = create_contact(name, email, phone);
     new_entry = add_entry(new_contact->name, new_contact);
 
-    /* If the contact was added sucessfully, updates the domain hashtable */
+    /* If the contact was added successfully, updates the domain hashtable */
     if (new_entry != NULL) { new_entry->target->contact->domain_occ = add_occ(domain); }
 }
 
