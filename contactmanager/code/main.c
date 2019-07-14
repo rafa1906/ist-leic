@@ -1,22 +1,21 @@
 /*
-* Ficheiro: main.c
-* Autor: Rafael Goncalves 92544
-* Descricao: Ficheiro principal do sistema de gestao de contactos
+* File: main.c
+* Author: Rafael Goncalves
+* Description: Main file for the contact manager
 */
 
-/* INCLUDES */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "interface.h"
 
-/* PROGRAMA */
-/* main: Inicializa as estruturas de dados (lista ligada e hashtables) e deteta
-         qual o comando a processar; aquando da saida do programa (introducao do
-         comando 'x'), liberta a memoria ocupada */
+
+/* main: Inits the linked list and the hashtables; extracts a command from user
+         input */
 int main() {
     char c;
 
-    init();
+    init();         /* Allocates memory for the data structures */
 
     do {
         scanf("%c", &c);
@@ -49,9 +48,9 @@ int main() {
             default:
                 break;
         }
-    } while (c != 'x');
+    } while (c != 'x');         /* Exits if user enters 'x' */
 
-    quit();
+    quit();         /* Frees the memory used by the data structures */
 
     return 0;
 }
