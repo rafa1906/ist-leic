@@ -1,24 +1,22 @@
 /*
-* Ficheiro: cctable.c
-* Autor: Rafael Goncalves 92544
-* Descricao: Ficheiro principal da hashtable dos dominios
+* File: dtable.c
+* Author: Rafael Goncalves
+* Description: Main domain hashtable file
 */
 
-/* INCLUDES */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "dtable.h"
 
-/* PROGRAMA */
-/* init_dtable: Inicializa a hashtable dos dominios (aloca espaco para a tabela
-                e inicializa todas as suas posicoes a NULL) */
+
+/* init_dtable: Inits the domain hashtable; sets all entries to NULL */
 void init_dtable() {
     dtable = (pair *) calloc(DTABLESIZE, sizeof(pair));
 }
 
-/* free_dtable: Liberta a memoria que foi usada pela tabela ao longo da execucao
-                do programa */
+/* free_dtable: Frees the memory used by the hashtable */
 void free_dtable() {
     int i;
 
@@ -26,8 +24,8 @@ void free_dtable() {
     free(dtable);
 }
 
-/* hash_domain: Obtem uma hash a partir de uma string que armazena o dominio;
-                utiliza a funcao hash djb2 */
+/* hash_domain: Hashes a domain (which will be used as the key afterwards) using
+                djb2 */
 int hash_domain(char *key) {
     unsigned long hash = 5381;
     int c;
@@ -37,7 +35,7 @@ int hash_domain(char *key) {
     return hash % DTABLESIZE;
 }
 
-/* add_occ: Regista uma ocorrencia de um dado dominio */
+/* add_occ: Registers a domain occurrence */
 pair add_occ(char* key) {
     pair current, new_pair;
     int i = hash_domain(key);
@@ -45,14 +43,13 @@ pair add_occ(char* key) {
     current = dtable[i];
 
     while (current != NULL) {
-        /* Se o dominio ja estiver armazenado, incrementa o contador das
-           ocorrencias */
+        /* If the domain was already added, increments the occurrence counter */
         if (strcmp(current->key, key) == 0) { current->occ++; return current; }
 
         current = current->next;
     }
 
-    /* Se o dominio nao estiver armazenado, cria um novo par para o armazenar */
+    /* If the domain isn't found, stores it in a new entry */
     new_pair = (pair) malloc(sizeof(struct pair));
 
     new_pair->next = dtable[i];
@@ -67,7 +64,7 @@ pair add_occ(char* key) {
     return new_pair;
 }
 
-/* remove_pairs: Remove todos os pares numa linha */
+/* remove_pairs: Removes all entries at a certain index */
 void remove_pairs(pair current) {
     while (current != NULL) {
         pair next = current->next;
@@ -79,8 +76,8 @@ void remove_pairs(pair current) {
     }
 }
 
-/* occ_by_hash: Extrai o numero de ocorrencias dado um certo dominio (0 se o
-                dominio nao estiver registado) */
+/* occ_by_hash: Extracts the number of occurrences of a given domain (0 if it is
+                not found) */
 int occ_by_hash(char *domain) {
     pair current;
     int i = hash_domain(domain);

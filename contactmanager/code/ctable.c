@@ -1,25 +1,22 @@
 /*
-* Ficheiro: cctable.c
-* Autor: Rafael Goncalves 92544
-* Descricao: Ficheiro principal da hashtable dos contactos
+* File: ctable.c
+* Author: Rafael Goncalves
+* Description: Main contact hashtable file
 */
 
 
-/* INCLUDES */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ctable.h"
 
-/* PROGRAMA */
-/* init_ctable: Inicializa a hashtable dos contactos (aloca espaco para a tabela
-                e inicializa todas as suas posicoes a NULL) */
+
+/* init_ctable: Inits the hashtable; sets all entries to NULL */
 void init_ctable() {
     ctable = (entry *) calloc(CTABLESIZE, sizeof(entry));
 }
 
-/* free_ctable: Liberta a memoria que foi usada pela tabela ao longo da execucao
-                do programa */
+/* free_ctable: Frees the memory used by the hashtable */
 void free_ctable() {
     int i;
 
@@ -27,32 +24,29 @@ void free_ctable() {
     free(ctable);
 }
 
-/* hash_name: Obtem uma hash a partir de uma string que serve de chave; utiliza
-              a funcao hash djb2 */
+/* hash_name: Hashes a name (which will be used as the key afterwards) using djb2 */
 int hash_name(char *key) {
     unsigned long hash = 5381;
     int c;
 
     while ((c = *key++)) { hash = ((hash << 5) + hash) + c; }
 
-    /* Transforma a hash num valor dentro do range da tabela */
+    /* Makes sure the hash is within bounds */
     return hash % CTABLESIZE;
 }
 
-/* add_entry: Dada uma chave, adiciona o contacto associado a esse nome a tabela
-              dos contactos; retorna no final a entrada adicionada ou NULL no
-              caso de nao ser possivel adicionar o contacto */
+/* add_entry: Given a key and a contact, tries to add the contact to the hashtable;
+              returns the new entry if successful and NULL if not */
 entry add_entry(char* key, Contact *new_contact) {
     entry current, new_entry;
-    int i = hash_name(key);         /* Obtem a hash para uma chave */
+    int i = hash_name(key);         /* Gets the hash */
 
-    current = ctable[i];            /* Viaja para a posicao indicada pela hash */
+    current = ctable[i];            /* Visits the index corresponding to the hash */
 
-    /* Percorre as entradas numa dada posicao da tabela, caso encontre uma chave
-       semelhante a do input da erro e retorna NULL */
+    /* Checks if there is already a contact with the same key; returns NULL if so */
     while (current != NULL) {
         if (strcmp(current->key, key) == 0) {
-            printf("Nome existente.\n");
+            printf("Name was already added.\n");
             free_contact(new_contact);
 
             return NULL;
@@ -61,8 +55,8 @@ entry add_entry(char* key, Contact *new_contact) {
         current = current->next;
     }
 
-    /* Caso seja possivel, adiciona o contacto a hashtable e a lista ligada,
-       retornando no final um ponteiro para a entrada */
+    /* If possible, adds the contact to the hashtable and to the linked list and
+       returns the new entry */
     new_entry = (entry) malloc(sizeof(struct entry));
 
     new_entry->next = ctable[i];
@@ -77,7 +71,7 @@ entry add_entry(char* key, Contact *new_contact) {
     return new_entry;
 }
 
-/* remove_entries: Remove todas as entradas numa linha da hashtable */
+/* remove_entries: Removes all entries at a certain index */
 void remove_entries(entry current) {
     while (current != NULL) {
         entry next = current->next;
@@ -89,18 +83,16 @@ void remove_entries(entry current) {
     }
 }
 
-/* search_by_hash: Procura um contacto atraves da hash do nome e imprime a
-                   informacao relativa a esse contacto; caso o contacto nao
-                   exista da erro */
+/* search_by_hash: Searches a contact by hash and prints its data */
 void search_by_hash(char *name) {
     entry current;
     int i = hash_name(name);
 
-    if(ctable[i] == NULL) { printf("Nome inexistente.\n"); return; }
+    if(ctable[i] == NULL) { printf("Name not found.\n"); return; }
 
     current = ctable[i];
 
-    /* Percorre uma linha ate encontrar (ou nao) a chave procurada */
+    /* Checks all entries at the specified index */
     while (current != NULL) {
         if (strcmp(current->key, name) == 0) {
             link target = current->target;
@@ -115,12 +107,11 @@ void search_by_hash(char *name) {
         current = current->next;
     }
 
-    printf("Nome inexistente.\n");
+    printf("Name not found.\n");
 }
 
-/* delete_by_hash: Apaga um contacto atraves da hash do nome; remove o contacto
-                   da hashtable dos contactos e da lista ligada; caso o contacto
-                   nao exista da erro */
+/* delete_by_hash: Deletes a contact from the hashtable and from the linked list
+                   by hash */
 void delete_by_hash(char *name) {
     entry current, prev;
     int i = hash_name(name);
@@ -128,15 +119,15 @@ void delete_by_hash(char *name) {
     current = ctable[i];
     prev = NULL;
 
-    if(ctable[i] == NULL) { printf("Nome inexistente.\n"); return; }
+    if(ctable[i] == NULL) { printf("Name not found.\n"); return; }
 
     while (current != NULL) {
         if (strcmp(current->key, name) == 0) {
-            /* Ajusta a lista ligada criada pela solucao de encadeamento externo */
+            /* Adjusts the list created by the separate chaining solution */
             if (prev == NULL) { ctable[i] = current->next; }
             else { prev->next = current->next; }
 
-            /* Apaga o contacto da lista ligada e da hashtable */
+            /* Deletes the contact from the data structures */
             delete_from_list(current->target);
             free(current->key);
             free(current);
@@ -148,16 +139,15 @@ void delete_by_hash(char *name) {
         current = current->next;
     }
 
-    printf("Nome inexistente.\n");
+    printf("Name not found.\n");
 }
 
-/* change_email_by_hash: Altera o email de um contacto dada a hash do nome; caso
-                         o contacto nao exista da erro */
+/* change_email_by_hash: Changes an email given a certain hash */
 void change_email_by_hash(char *name, char *new_email, char *domain) {
     entry current;
     int i = hash_name(name);
 
-    if(ctable[i] == NULL) { printf("Nome inexistente.\n"); return; }
+    if(ctable[i] == NULL) { printf("Name not found.\n"); return; }
 
     current = ctable[i];
 
@@ -171,5 +161,5 @@ void change_email_by_hash(char *name, char *new_email, char *domain) {
         current = current->next;
     }
 
-    printf("Nome inexistente.\n");
+    printf("Name not found.\n");
 }

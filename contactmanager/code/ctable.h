@@ -1,34 +1,35 @@
 /*
-* Ficheiro: ctable.h
-* Autor: Rafael Goncalves 92544
-* Descricao: Header do ficheiro responsavel pela gestao da hashtable dos contactos
+* File: ctable.h
+* Author: Rafael Goncalves
+* Description: Header for the contact hashtable
 */
+
 
 #ifndef CTABLE_H
 #define CTABLE_H
 
-/* INCLUDES */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "contacts.h"
 
-/* CONSTANTES */
+
 #define CTABLESIZE 5003
 
-/* ESTRUTURAS */
-/* entry: Entrada da hashtable dos contactos; e constituida por uma chave, um
-          ponteiro para o contacto em questao e um ponteiro para a proxima
-          entrada com o mesmo indice */
+
+/* entry: Contact hashtable entry; holds a key, a pointer to a contact and a
+          pointer to the next entry with the same index (collisions are handled
+          using separate chaining) */
 typedef struct entry {
     char *key;
     link target;
     struct entry *next;
 } * entry;
 
-/* VARIAVEIS */
-entry *ctable;          /* Ponteiro para a primeira posicao da hashtable */
 
-/* PROTOTIPOS */
+entry *ctable;          /* Pointer to the first entry */
+
+
 void init_ctable();
 void free_ctable();
 int hash_name(char *key);
