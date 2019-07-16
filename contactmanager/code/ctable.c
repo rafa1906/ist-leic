@@ -71,7 +71,7 @@ entry add_entry(char* key, Contact *new_contact) {
     return new_entry;
 }
 
-/* remove_entries: Removes all entries at a certain index */
+/* remove_entries: Removes all entries at a given index */
 void remove_entries(entry current) {
     while (current != NULL) {
         entry next = current->next;

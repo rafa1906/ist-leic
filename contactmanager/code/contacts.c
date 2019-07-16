@@ -22,7 +22,7 @@ void init_list() {
 void free_list() {
     link current = head;
 
-    /* If the list is empty, it does nothing */
+    /* If the list is empty, does nothing */
     if (head == NULL) { return; }
 
     /* Deletes the nodes and their respective contacts one by one */

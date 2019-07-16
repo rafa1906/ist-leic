@@ -16,7 +16,7 @@
 #define DTABLESIZE 503
 
 
-/* pair: Domain hashtable entry; holds a domain/number of occurrences pair and
+/* pair: Domain hashtable entry; holds a 'domain/number of occurrences' pair and
          a pointer to the next pair with the same index (collisions are handled
          using separate chaining) */
 typedef struct pair {
