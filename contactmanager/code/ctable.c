@@ -1,7 +1,7 @@
 /*
 * File: ctable.c
 * Author: Rafael Goncalves
-* Description: Main contact hashtable file
+* Description: Main contact hash table file
 */
 
 
@@ -11,12 +11,12 @@
 #include "ctable.h"
 
 
-/* init_ctable: Inits the hashtable; sets all entries to NULL */
+/* init_ctable: Inits the hash table; sets all entries to NULL */
 void init_ctable() {
     ctable = (entry *) calloc(CTABLESIZE, sizeof(entry));
 }
 
-/* free_ctable: Frees the memory used by the hashtable */
+/* free_ctable: Frees the memory used by the hash table */
 void free_ctable() {
     int i;
 
@@ -35,7 +35,7 @@ int hash_name(char *key) {
     return hash % CTABLESIZE;
 }
 
-/* add_entry: Given a key and a contact, tries to add the contact to the hashtable;
+/* add_entry: Given a key and a contact, tries to add the contact to the hash table;
               returns the new entry if successful and NULL if not */
 entry add_entry(char* key, Contact *new_contact) {
     entry current, new_entry;
@@ -55,7 +55,7 @@ entry add_entry(char* key, Contact *new_contact) {
         current = current->next;
     }
 
-    /* If possible, adds the contact to the hashtable and to the linked list and
+    /* If possible, adds the contact to the hash table and to the linked list and
        returns the new entry */
     new_entry = (entry) malloc(sizeof(struct entry));
 
@@ -110,7 +110,7 @@ void search_by_hash(char *name) {
     printf("Name not found.\n");
 }
 
-/* delete_by_hash: Deletes a contact from the hashtable and from the linked list
+/* delete_by_hash: Deletes a contact from the hash table and from the linked list
                    by hash */
 void delete_by_hash(char *name) {
     entry current, prev;

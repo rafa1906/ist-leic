@@ -10,7 +10,7 @@
 #include "interface.h"
 
 
-/* main: Inits the linked list and the hashtables; extracts a command from user
+/* main: Inits the linked list and the hash tables; extracts a command from user
          input */
 int main() {
     char c;

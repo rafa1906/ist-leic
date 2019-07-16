@@ -1,7 +1,7 @@
 /*
 * File: dtable.c
 * Author: Rafael Goncalves
-* Description: Main domain hashtable file
+* Description: Main domain hash table file
 */
 
 
@@ -11,12 +11,12 @@
 #include "dtable.h"
 
 
-/* init_dtable: Inits the domain hashtable; sets all entries to NULL */
+/* init_dtable: Inits the domain hash table; sets all entries to NULL */
 void init_dtable() {
     dtable = (pair *) calloc(DTABLESIZE, sizeof(pair));
 }
 
-/* free_dtable: Frees the memory used by the hashtable */
+/* free_dtable: Frees the memory used by the hash table */
 void free_dtable() {
     int i;
 

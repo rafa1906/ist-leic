@@ -15,7 +15,7 @@
 
 
 /* contact: Stores a contact; holds a name, an email, a phone (all strings) and
-            a pointer to the respective domain in the domain hashtable */
+            a pointer to the respective domain in the domain hash table */
 typedef struct {
     char *name;
     char *email;

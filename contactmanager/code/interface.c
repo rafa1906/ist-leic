@@ -26,8 +26,8 @@ void quit() {
 }
 
 /* add_contact: Reads a name, an email and a phone number from stdio; stores the
-                contact info in the contact list and hashtable and the domain
-                info in the domain hashtable */
+                contact info in the contact list and hash table and the domain
+                info in the domain hash table */
 void add_contact() {
     Contact *new_contact;
     entry new_entry;
@@ -44,7 +44,7 @@ void add_contact() {
     new_contact = create_contact(name, email, phone);
     new_entry = add_entry(new_contact->name, new_contact);
 
-    /* If the contact was added successfully, updates the domain hashtable */
+    /* If the contact was added successfully, updates the domain hash table */
     if (new_entry != NULL) { new_entry->target->contact->domain_occ = add_occ(domain); }
 }
 
@@ -62,7 +62,7 @@ void search_name() {
     search_by_hash(name);
 }
 
-/* remove_contact: Removes a contact; adjusts the domain hashtable in the process */
+/* remove_contact: Removes a contact; adjusts the domain hash table in the process */
 void remove_contact() {
     char name[MAXNAME];
 
@@ -71,7 +71,7 @@ void remove_contact() {
     delete_by_hash(name);
 }
 
-/* change_email: Changes an email; adjusts the domain hashtable in the process */
+/* change_email: Changes an email; adjusts the domain hash table in the process */
 void change_email() {
     char name[MAXNAME], new_email[MAXEMAIL], temp[MAXEMAIL];
     char *domain;

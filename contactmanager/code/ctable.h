@@ -1,7 +1,7 @@
 /*
 * File: ctable.h
 * Author: Rafael Goncalves
-* Description: Header for the contact hashtable
+* Description: Header for the contact hash table
 */
 
 
@@ -17,7 +17,7 @@
 #define CTABLESIZE 5003
 
 
-/* entry: Contact hashtable entry; holds a key, a pointer to a contact and a
+/* entry: Contact hash table entry; holds a key, a pointer to a contact and a
           pointer to the next entry with the same index (collisions are handled
           using separate chaining) */
 typedef struct entry {
