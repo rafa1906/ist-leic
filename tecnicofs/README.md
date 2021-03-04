@@ -15,7 +15,7 @@ c filename permissions
 
 Where a file with the name **filename** is created with permissions **permissions**.
 
-A more thorough overview of possible commands (delete, rename, read, write, ...) can be found in *assignment.md* (in portuguese).
+A more thorough overview of possible commands (delete, rename, read, write, ...) can be found in *assignment.pdf* (in portuguese).
 
 
 ## Academic details
