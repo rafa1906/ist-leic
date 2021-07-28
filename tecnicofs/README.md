@@ -21,4 +21,6 @@ A more thorough overview of possible commands (delete, rename, read, write, ...)
 ## Academic details
 This project was developed for SO (Sistemas Operativos) - a second year programming class about introductory parallel computing and socket programming and the inner workings of an OS.
 
+It was done with the help of @barbosa46 (https://github.com/barbosa46) with the base code given by the class teachers.
+
 The final grade was **15.53/20.00**.
