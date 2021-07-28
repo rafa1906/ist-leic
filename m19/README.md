@@ -7,7 +7,7 @@ It is written in Java using two modules (m19-core for the core logic and m19-app
 
 
 ## Running TecnicoFS
-Interaction with m19 happens through a terminal. The compilation and use details can be found on the assignment details ([here](https://web.tecnico.ulisboa.pt/~david.matos/w/pt/index.php/Programa%C3%A7%C3%A3o_com_Objectos/Projecto_de_Programa%C3%A7%C3%A3o_com_Objectos/Enunciado_do_Projecto_de_2019-2020) - in Portuguese), along with other interesting details. An alternative is using runProject.sh, which compiles the code and runs a set of tests:
+Interaction with m19 happens through a terminal. The compilation and use specifics can be found on the assignment details ([here](https://web.tecnico.ulisboa.pt/~david.matos/w/pt/index.php/Programa%C3%A7%C3%A3o_com_Objectos/Projecto_de_Programa%C3%A7%C3%A3o_com_Objectos/Enunciado_do_Projecto_de_2019-2020) - in Portuguese), along with more information. An alternative is using runProject.sh, which compiles the code and runs a set of tests:
 
 ```console
 ./runProject.sh
