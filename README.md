@@ -1,3 +1,3 @@
 # ist-leic
 
-Repo for university projects.
+A compilation of some of my BSc projects.
